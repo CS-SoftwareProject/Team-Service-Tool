@@ -7,6 +7,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -60,5 +62,106 @@ public class JdbcTemplate {
     } catch (SQLException e) {
       logger.debug("sourceReturn Error:" + e.getMessage());
     }
+  }
+  
+  public void executeUpdate(String sql, PreparedStatementSetter pss) {
+    conn = getConnection();
+    try {
+      pstmt = conn.prepareStatement(sql);
+      pss.setParameters(pstmt);
+      pstmt.executeUpdate();
+    } catch (SQLException e) {
+      logger.debug("JdbcTemplate executeUpdate Error: " + e.getMessage());
+    } finally {
+      sourceReturn();
+    }
+  }
+  
+  public <T> T generatedExecuteUpdate(String sql, PreparedStatementSetter pss, RowMapper rm) {
+    conn = getConnection();
+    T result = null;
+    try {
+      pstmt = conn.prepareStatement(sql, pstmt.RETURN_GENERATED_KEYS);
+      pss.setParameters(pstmt);
+      pstmt.executeUpdate();
+      rs = pstmt.getGeneratedKeys();
+      result = rm.mapRow(rs);
+    } catch (SQLException e) {
+      logger.debug("JdbcTemplate executeUpdate Error: " + e.getMessage());
+    } finally {
+      sourceReturn();
+      return result;
+    }
+  }
+  
+  public <T> T executeQuery(String sql, PreparedStatementSetter pss, RowMapper rm) {
+    conn = getConnection();
+    T result = null;
+    try {
+      pstmt = conn.prepareStatement(sql);
+      pss.setParameters(pstmt);
+      rs = pstmt.executeQuery();
+      result = rm.mapRow(rs);
+    } catch (SQLException e) {
+      logger.debug("JdbcTemplate executeQuery Error: " +  e);
+    } finally {
+      sourceReturn();
+      return result;
+    }
+  }
+  
+  public <T> List<T> list(String sql, PreparedStatementSetter pss, RowMapper rm) {
+    List<T> list = new ArrayList<T>();
+    conn = getConnection();
+    try {
+      pstmt = conn.prepareStatement(sql);
+      pss.setParameters(pstmt);
+      rs = pstmt.executeQuery();
+      while (rs.next()) {
+        list.add(rm.mapRow(rs));
+      }
+    } catch (SQLException e) {
+      logger.debug("JdbcTemplate executeQuery Error: " + e.getMessage());
+    } finally {
+      sourceReturn();
+      return list;
+    }
+  }
+  
+  public void selectAndUpdate(String sql, String sql2, PreparedStatementSetter pss, SelectAndUpdateSetter snus) {
+    conn = getConnection();
+    try {
+      pstmt = conn.prepareStatement(sql);
+      pstmt2 = conn.prepareStatement(sql2);
+      pss.setParameters(pstmt);
+      rs = pstmt.executeQuery();
+      while (rs.next()) {
+        snus.setParametersBySelect(pstmt2, rs);
+        pstmt2.executeUpdate();
+      }
+    } catch (SQLException e) {
+      logger.debug("JdbcTemplate selectAndUpdate Error: " + e.getMessage());
+    }
+  }
+  
+  public <T> List<T> selectAndSelect(String sql, String sql2, PreparedStatementSetter pss, SelectAndSelectSetter sass, RowMapper rm) {
+    List<T> list = new ArrayList<T>();
+    conn = getConnection();
+    try {
+      pstmt = conn.prepareStatement(sql);
+      pstmt2 = conn.prepareStatement(sql2);
+      pss.setParameters(pstmt);
+      rs = pstmt.executeQuery();
+      while (rs.next()) {
+        sass.setParametersBySelect(pstmt2, rs);
+        rs2 = pstmt2.executeQuery();
+        if (rs2.next()) {
+            list.add(rm.mapRow(rs2));
+        }
+      }
+    } catch (SQLException e) {
+      logger.debug("JdbcTemplate selectAndSelect Error: " + e.getMessage());
+    }
+    return list;
   }
 }
