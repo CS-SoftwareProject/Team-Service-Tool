@@ -57,6 +57,9 @@
 
     <!-- <a href="#">I forgot my password</a><br> -->
     <a href="/users/createForm" class="text-center">회원가입</a>
+    <div>
+   	 <a href="/main.jsp" class="text-center">타임라인</a>
+    </div>
   </div>
   <!-- /.login-box-body -->
 </div>
