@@ -171,7 +171,7 @@ desired effect
     <section class="sidebar">
 
       <!-- Sidebar user panel (optional) -->
-      <div class="user-panel" style="margin-top: -25%;">
+      <div class="user-panel">
         <div class="pull-left image">
           <img src="${imgPath}" class="img-circle" alt="User Image">
         </div>
