@@ -34,16 +34,16 @@ public class UpdateUserServlet extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     HttpSession session = request.getSession();
 
-    User sessionUser=(User)SessionUtils.getObjectValue(session, "user");
+    User sessionUser = (User) SessionUtils.getObjectValue(session, "user");
     if (sessionUser == null) {
       response.sendRedirect("/");
       logger.debug("UpdateUserServlet error");
       return;
     }
-    
-    String path="/upload_image/";
+
+    String path = "/upload_image/";
     MultipartRequest mr = new MultipartRequest(request, request.getRealPath(path), 1024 * 1024 * 5, "utf-8", new DefaultFileRenamePolicy());
-    
+
     String userId = mr.getParameter("userId");
     String password = mr.getParameter("password");
     String name = mr.getParameter("name");
@@ -65,18 +65,17 @@ public class UpdateUserServlet extends HttpServlet {
     UserDAO userDAO = new UserDAO();
 
     try {
-      File uploadImage=mr.getFile("image");
-      logger.debug("imageFile: {}",uploadImage);
-      
+      File uploadImage = mr.getFile("image");
+      logger.debug("imageFile: {}", uploadImage);
+
       String filePath;
-      
-      if(uploadImage!=null){
-        filePath=path+uploadImage.getName();
+
+      if (uploadImage != null) {
+        filePath = path + uploadImage.getName();
         user.setImage(filePath);
         userDAO.updateUserWithFile(user);
-      }
-      else{
-        filePath=userDAO.getByUserId(userId).getImage();
+      } else {
+        filePath = userDAO.getByUserId(userId).getImage();
         user.setImage(filePath);
         userDAO.updateUser(user);
       }
@@ -90,6 +89,7 @@ public class UpdateUserServlet extends HttpServlet {
 
   private void errorForward(HttpServletRequest request, HttpServletResponse response, String errorMessage) throws ServletException, IOException {
     request.setAttribute("formErrorMessage", errorMessage);
+    request.setAttribute("isUpdate", true);
     RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/jsp/register.jsp");
     rd.forward(request, response);
   }

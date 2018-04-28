@@ -38,6 +38,7 @@ public class UpdateFormUserServlet extends HttpServlet {
 
     User user = userDAO.getByUserId(userId);
     request.setAttribute("user", user);
+    request.setAttribute("isUpdate", true);
     RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/jsp/register.jsp");
     rd.forward(request, response);
   }
