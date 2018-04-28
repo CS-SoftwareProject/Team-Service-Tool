@@ -94,7 +94,7 @@
                                                 <button class="btn btn-default" type="submit">Modify</button>
                                                 </span>
                                                  <span class="input-group-btn">
-                                                   <button type="button" class="close" aria-label="Close">
+                                                   <button type="button" class="close" aria-label="Close" style="margin-left: 4px;">
                                                    <a href="#modifyAction${status.count}" data-toggle="collapse" aria-controls="modifyAction${status.count}"> X </a>
                                                    </button>
                                                 </span>
@@ -128,7 +128,7 @@
                                                 <button class="btn btn-default" type="submit">Modify</button>
                                                 </span>
                                                  <span class="input-group-btn">
-                                                   <button type="button" class="close" aria-label="Close">
+                                                   <button type="button" class="close" aria-label="Close" style="margin-left: 4px;">
                                                    <a href="#modifyAction${status.count}" data-toggle="collapse" aria-controls="modifyAction${status.count}"> X </a>
                                                    </button>
                                                 </span>
