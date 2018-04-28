@@ -17,6 +17,7 @@
 
 <head>
 <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+<link href="/resources/startbootstrap/css/freelancer.min.css" rel="stylesheet">
 </head>
 
 <%@include file="/WEB-INF/jsp/commons/T_header.jsp"%>   
