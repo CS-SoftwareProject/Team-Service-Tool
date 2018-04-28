@@ -1,4 +1,4 @@
-package TT.web;
+package TT.web.user;
 
 import java.io.IOException;
 
