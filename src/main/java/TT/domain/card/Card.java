@@ -159,6 +159,14 @@ public class Card {
     this.cardOrder = cardOrder;
   }
 
+  public List<Assignee> getAssignees() {
+    return assigs;
+  }
+
+  public void setAssignees(List<Assignee> assignees) {
+    this.assigs = assignees;
+  }
+
   public int getProgress() {
     return progress;
   }
