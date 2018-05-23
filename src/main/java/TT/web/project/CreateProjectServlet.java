@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import TT.dao.project.ProjectDAO;
+import TT.dao.timeline.TimelineDAO;
 import TT.domain.project.Project;
 import TT.domain.user.User;
 import TT.service.support.SessionUtils;
@@ -24,6 +25,7 @@ public class CreateProjectServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     Project project = new Project();
+    TimelineDAO timelineDAO = new TimelineDAO();
     User user = new User();
 
     ProjectDAO projectDAO = new ProjectDAO();
@@ -39,12 +41,12 @@ public class CreateProjectServlet extends HttpServlet {
     try {
       projectDAO.addProject(project);
       projectDAO.addprojectMember(project, user, 1);
+      timelineDAO.addTimeline(project.getProjectName());
 
       response.sendRedirect("/project/projectlist");
 
     } catch (Exception e) {
       logger.debug("Project create Fail : " + e);
     }
-
   }
 }

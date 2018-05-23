@@ -29,9 +29,8 @@ public class User {
   @NotEmpty(message = "이메일을 입력하세요.")
   @Email
   private String email;
-
   private String image;
-
+  
   public User() {
 
   }

@@ -113,10 +113,9 @@
 	          <!--/.direct-chat -->
 			</li>
 		</ul>
-       <!--  <script src="/resources/gantt_resources/libs/date.js"></script>
 		<script src="/scripts/paintCanvas.js"></script>
-		<script src="/scripts/webSocketChat.js"></script> -->
-		
+		<script src="/scripts/webSocketChat.js"></script>
+		<script src="/scripts/date.js"></script>
         <!-- /.control-sidebar-menu -->
 			
       </div>
@@ -157,7 +156,184 @@
       </div>
      
      <script>
-		/*  */
+     $(document).ready(function(){
+    	$.ajax({
+    		type:'get',
+    		dataType:'json',
+    		url:'/projects/getChats',
+			success:function(data){
+				data.forEach(function(item){
+					var temp='';
+					if(item.writeUser===now_userId){
+						temp+="<div class="+"'direct-chat-msg right'>";
+					    temp+="<div class="+"'direct-chat-info clearfix'>";
+					      temp+="<span class="+"'direct-chat-name pull-right'>"+item.writeUser+"</span>";
+					      temp+="<span class="+"'direct-chat-timestamp pull-left'>"+new Date(item.chatTime).format("y-MM-dd HH:mm")+"</span>";
+					    temp+="</div>";
+					    temp+="<img class="+"'direct-chat-img'"+ "src='"+item.userImage+"' alt='User Image'>";
+					    temp+="<div class="+"'direct-chat-text'>";
+					    temp+=item.chatMessage;
+					    temp+="</div>";
+					  temp+="</div>";
+					}
+					else{
+						temp+="<div class="+"'direct-chat-msg'>";
+				        temp+="<div class="+"'direct-chat-info clearfix'>";
+				          temp+="<span class="+"'direct-chat-name pull-left'>"+item.writeUser+"</span>";
+				          temp+="<span class="+"'direct-chat-timestamp pull-right'>"+new Date(item.chatTime).format("y-MM-dd HH:mm")+"</span>";
+				        temp+="</div>";
+				        temp+="<img class="+"'direct-chat-img'"+ "src='"+item.userImage+"' alt='User Image'>";
+				        temp+="<div class="+"'direct-chat-text'>";
+				        temp+=item.chatMessage;
+				        temp+="</div>";
+				      temp+="</div>";
+					}
+					$('.direct-chat-messages').append(temp);
+				});
+			},
+		 error:ajaxError
+    	})
+    });
+     
+     function getProjectMember(){
+    	 $.ajax({
+    		 type:'get',
+    		 dataType:'json',
+    		 url:'/project/memberlist',
+    		 success:function(data){
+    			 $('.contacts-list').empty();
+    			 var userPower=JSON.parse(data.isMaster);
+    			 JSON.parse(data.list).forEach(function(item){
+    				 var temp='';
+    				 temp+="<li class='dropdown'>";
+                     temp+="<a class='dropdown-toggle' data-toggle='dropdown' href='#'>";
+                     temp+="<img class='contacts-list-img' src='"+item.userImage+"' alt='User Image'>";
+                     temp+="<div class='contacts-list-info'>";
+                     temp+="<span class='contacts-list-name'>";
+                     temp+=item.userId;
+                     temp+="<small class='contacts-list-date pull-right'>"+powerToString(item.power)+"</small>";
+                     temp+="</span>";
+                     temp+="<span class='contacts-list-msg'>"+item.userName+"</span>";
+                     temp+="</div>";
+                   	 temp+="</a>";
+                     temp+="<ul class='dropdown-menu' style='margin-left: 10px;'>";
+                     temp+="<li role='presentation'>";
+                     temp+="<a role='menuitem' tabindex='-1' href='#' onclick='javascript:showUserProfile($(this))'>정보보기";
+                     temp+="<input type='hidden' id='userId' value='" + item.userId + "'>";
+                     temp+="</a>";
+                     temp+="</li>";
+                     if(userPower==true && item.userId!=='${user.userId}'){
+	                     temp+="<li role='presentation' class='divider'></li>";
+	                     temp+="<li role='presentation'><a role='menuitem' tabindex='-1' href='#'>방장위임</a></li>";
+	                     temp+="<li role='presentation'><a role='menuitem' tabindex='-1' value='"+item.userId+"' onclick='deleteProjectMember("+"$(this)"+")' href='#'>강퇴하기</a></li>";
+                     }
+                     temp+="</ul>";
+               		 temp+="</li>";
+               		$('.contacts-list').append(temp);
+    			 });
+    		 },
+    		 error:ajaxError
+    	 });
+     }
+     
+     function deleteProjectMember(val){
+    	$.ajax({
+    		url:'/projects/kickProjectUser',
+    		type:'get',
+    		data:{
+    			userId:val[0].attributes.value.value
+    		},
+    		dataType:'json',
+    		success:function(data){
+    			if(data==true)
+    				getProjectMember();
+    			else
+    				ajaxError();
+    		} 
+    	});
+     }
+     
+     function getImageList(){
+	     $.ajax({
+	    	 type:'get',
+	    	 url:"/project/imagelist",
+	    	 dataType:"json",
+	    	 success:function(data){
+	    		 $('#chat-image-list-display').empty();
+	    		 data.forEach(function(item){
+					 var tempStr='';
+					 tempStr="<button type="+"'button'"+ "id='"+item+"' onclick='clickImage("+"$(this)"+")'><input type='checkbox' class='imageCheck'><img src='"+item+"'></button>";
+		    		 $('#chat-image-list-display').append(tempStr);
+	    		 });
+	    	 },
+	    	 error:ajaxError
+	     });
+     }
+     
+     function ajaxError(){
+    	   alert("데이터 로딩 오류");
+     }
+     
+     function clickImage(val){
+    	 console.log(val);
+    	 
+    	 console.log('버튼클릭');
+    	 $('#chat-image-list-display button').removeClass('selected');
+    	 val.addClass('selected');
+    	 imageId=val.attr('id');
+    	 var clickImg = new Image();
+    	 clickImg.src =imageId;
+    	 var context = document.getElementById("chat-image-area-canvas").getContext("2d");
+    	 context.drawImage(clickImg, 0, 0,230,200);
+
+    	 imageSend();
+    	 clickSync();
+     }
+     
+     function powerToString(val){
+    	 if(val==1) return "방장";
+    	 return "팀원";
+     }
+
+     function showProgressModal() {
+     	$('#progress-modal').modal('show');
+     }
+     
+     function ajaxError(){
+  	   alert("데이터 로딩 오류");
+	 }
+
+	 function showUserProfile(target) {
+	    $('#userProfile-modal').modal('show');
+	  	$.ajax({
+  		type:'get',
+  		data:{
+  			userId:target.find('input').val()
+  		},
+  		url:'/users/readProfile',
+  		dataType:'json',
+  		success:function (data) {
+			console.log("JSON DATA log : ", data);
+			var targetUser = JSON.parse(data[0]);
+			console.log("JS userProject List : ", targetUser);
+			$('#profile-userId').html(targetUser.userId);
+			$('#profile-userName').html(targetUser.name);
+			$('#profile-userBirth').html(targetUser.birth);
+			$('#profile-userEmail').html(targetUser.email);
+			$('#profile-userImage').attr("src", targetUser.image);
+			var userProject = JSON.parse(data[1]);
+			var str='';
+			var num=0;
+			userProject.forEach(function(targetUser){
+				str+="<tr>";
+				str+="<td>" + ++num + "</td>";
+				str+="<td><a>" + userProject[0].projectName + "</a></td>";
+				$('#profile-joinlist').html(str);
+			});
+	  		},
+	  		error:ajaxError
+	  	});
+	 }
      </script>
       <!-- /.tab-pane -->
     </div>

@@ -17,10 +17,10 @@
   <link rel="stylesheet" href="/resources/bower_components/Ionicons/css/ionicons.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="/resources/dist/css/AdminLTE.min.css">
-  <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
-        page. However, you can choose any other skin. Make sure you
-        apply the skin class to the body tag so the changes take effect. -->
+  
   <link rel="stylesheet" href="/resources/dist/css/skins/skin-black.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="/resources//plugins/iCheck/flat/blue.css">
   
   <!-- TotalStyle -->
   <link href="/stylesheets/style.css?" rel="stylesheet" type="text/css">
@@ -86,33 +86,18 @@ desired effect
             <!-- Menu toggle button -->
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-envelope-o"></i>
-              <span class="label label-success">4</span>
+              <span class="label label-success">${notRead}</span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header">You have 4 messages</li>
-              <li>
-                <!-- inner menu: contains the messages -->
-                <ul class="menu">
-                  <li><!-- start message -->
-                    <a href="#">
-                      <div class="pull-left">
-                        <!-- User Image -->
-                        <img src="/resources/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <!-- Message title and timestamp -->
-                      <h4>
-                        Support Team
-                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                      </h4>
-                      <!-- The message -->
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <!-- end message -->
-                </ul>
-                <!-- /.menu -->
+            <div style="text-align: center;">
+              <li class="header" style="margin: 5%; display: inline-flex;">
+              <i class="fa fa-quote-left"></i>
+              <h4>You have <a class="noRead"></a> messages</h4>
+              <i class="fa fa-quote-right"></i>
               </li>
-              <li class="footer"><a href="#">See All Messages</a></li>
+            </div>
+              <li id="last-message-area"></li>
+              <li class="#"><a href="/users/messagelist">See All Messages</a></li>
             </ul>
           </li>
           <!-- /.messages-menu -->
@@ -177,12 +162,13 @@ desired effect
         <div class="pull-left info">
           <p>${user.userId }</p>
           <!-- Status -->
-          <i class="fa fa-circle text-success"></i> 접속중
+          <i class="fa fa-circle text-success">${msgCnt}</i> 접속중
+          <script>console.log("하이 : ", ${msgCnt})</script>
         </div>
       </div>
 
       <!-- Sidebar Menu -->
-      <ul class="sidebar-menu" data-widget="tree">
+      <ul class="sidebar-menu tree" data-widget="tree">
         <li class="header">MENU</li>
         <!-- Optionally, you can add icons to the links -->
         <li class="active"><a href="/users/userDashBoard"><i class="glyphicon glyphicon-dashboard"></i> <span>개인 대시보드</span></a></li>
@@ -203,42 +189,98 @@ desired effect
           </a>
           <ul class="treeview-menu">
 	        <li><a href="/project/projectDashBoard"><i class="fa fa-circle-o"></i>프로젝트 대시보드</a></li>
-	        <c:if test="${not empty ganttList}">
-            <li class="treeview">
-             <a href="#"><i class="fa fa-list-ol"></i><span>간트 차트</span>
-               <span class="pull-right-container">
-             	 <i class="fa fa-angle-left pull-right"></i>
-         	   </span>
-       	   	 </a>
-       	   	 	 <ul class="treeview-menu">
-       	   	 	 <c:forEach var="list" items="${ganttList}" varStatus="status">
-       	   	 		<li><a href="/gantts/loadGantt?ganttNum=${list.ganttNum}"><i class="fa fa-circle-o"></i>${list.boardName}</a></li>
-       	   	 	 </c:forEach>
-       	   	 	 </ul>
-            </li>
-            </c:if>
+	        <li><a href="/project/timeline"><i class="fa fa-circle-o"></i>프로젝트 타임라인</a></li>
           </ul>
         </li>
       </ul>
       <!-- /.sidebar-menu 2-->
       </c:if>
+      
+      <c:if test="${isReadCard}">
+      <!-- Sidebar Menu 3 -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header">보드 명 : ${board.boardName}</li>
+        <!-- Optionally, you can add icons to the links -->
+        <li class="treeview">
+          <a href="#"><i class="fa fa-link"></i><span>보드 관리</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+	        <li><a href="/board/boardlist?projectName=${projectName}"><i class="fa fa-circle-o"></i>보드 목록</a></li>
+	        <li><a href="#"><i class="fa fa-circle-o"></i>보드 로그</a></li>
+          </ul>
+        </li>
+      </ul>
+      <!-- /.sidebar-menu 3-->
+      </c:if>
     </section>
     <!-- /.sidebar -->
-    <!-- 업로드 페이지 임폴팅-->
+   	<%@include file = "/WEB-INF/jsp/modalpage/upload.jsp"%> 
   </aside>
 
+<!-- jQuery 3 -->
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="/scripts/date.js"></script>
+<!-- iCheck -->
+<script src="/resources/plugins/iCheck/icheck.min.js"></script>
 <script>
 function addImage(){
 	$('#uploadmodal').modal('show');
 }
 
-/* $('.sidebar li').click(function(){
-    $('.sidebar li').removeClass('active');
-    $(this).addClass('active');
+function notRead() {
+	$.ajax({
+		type:'get',
+		dataType:'json',
+		url:'/message/notread',
+		success:function (data) {
+			if(data.length > 0) {
+				var str='';
+				data.forEach(function(item) {
+ 					$('.noRead').text(item.notRead);
+					$('.label-success').text(item.notRead);			
+					$('.label-primary').text(item.notRead);
+					str+='<ul class="menu">';
+					str+='<li>';
+					str+='<a href="/users/readmail?msgNum=' + item.message.msgNum + '">';
+					str+='<div class="pull-left">';
+					str+='<img src="' + item.image + '">';
+					str+='</div>';
+					str+='<h4 class="last-message-subject">' + item.message.subject;
+					str+='<small class="last-message-dateDiff">';
+					str+='<i class="fa fa-clock-o"></i>' + ' ' + item.message.dateDiff;
+					str+='</small>';
+					str+='</h4>';
+					str+='</a>';
+					str+='</li>';
+					str+='</ul>';
+				});
+					$('#last-message-area').html(str);
+			}
+			else {
+				$('.noRead').text(0);
+				$('.label-success').text();			
+				$('.label-primary').text();
+				var str='';
+				str+='<div class="alert alert-warning alert-dismissible" style="margin-top: 5%;">';
+				str+='<h4><i class="icon fa fa-warning"></i>Not Found</h4>';
+				str+='최근 읽지 않은 메시지가 없습니다.';
+				str+='</div>';
+				$('#last-message-area').html(str);
+			}
+		},
+		error:ajaxError
+	});
+}
+
+$(function() {
+	notRead();
+ 	timer = setInterval( function test() {
+ 		notRead();
+	}, 3000); 
 });
- */</script>
-
-<!-- jQuery 3 -->
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
+</script>
+<!-- AdminLTE for demo purposes -->

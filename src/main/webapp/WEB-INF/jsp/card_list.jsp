@@ -26,9 +26,9 @@
             <div id="top">
               <div id="mini-menu"> 
                <div class="btn-group-sm" role="group" aria-label="...">   
-               <button type="button" class="btn btn-info" onclick="location.href='/board/boardlist?projectName=${projectName}'">목록</button>
-               <button type="button" class="btn btn-info" data-toggle="modal" data-target="#invite-modal">초대</button>
-               <button type="button" class="btn btn-info" onclick="getRoleList();">역할</button>
+               <button type="button" class="btn btn-info" onclick="location.href='/board/boardlist?projectName=${projectName}'">보드목록</button>
+               <button type="button" class="btn btn-info" data-toggle="modal" data-target="#invite-modal">초대하기</button>
+               <button type="button" class="btn btn-info" onclick="getRoleList();">역할관리</button>
                <c:if test="${isExistGantt == false }">
 			       <button type="button" class="btn btn-info" data-toggle="modal" data-target="#gantt-alert">간트차트</button>
 		       </c:if>		

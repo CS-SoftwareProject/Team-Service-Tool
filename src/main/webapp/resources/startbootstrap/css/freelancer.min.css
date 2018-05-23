@@ -48,7 +48,6 @@ hr.star-dark:after {
 /* section {
 	padding: 6rem 0
 } */
-
 section h2 {
 	font-size: 2.25rem;
 	line-height: 2rem
@@ -297,11 +296,33 @@ header.masthead h2 {
 	opacity: 0
 }
 
-.floating-label-form-group:not (:first-child ){
-	padding-left: 14px;
-	border-left: 1px solid #e9ecef
-}
+.floating-label-form-group
+:not
+ 
+(
+:first-child
+ 
+){
+padding-left
+:
+ 
+14
+px
+;
 
+	
+border-left
+:
+ 
+1
+px
+ 
+solid
+ 
+#e9ecef
+
+
+}
 .floating-label-form-group-with-value label {
 	top: 0;
 	opacity: 1
@@ -372,4 +393,72 @@ a:active, a:focus, a:hover {
 .btn-secondary:active, .btn-secondary:focus, .btn-secondary:hover {
 	background-color: #1a252f;
 	border-color: #1a252f
+}
+
+.timeline-header {
+	font-size: 30px;
+	text-align: center;
+}
+
+.timeline-body {
+	text-align: center;
+}
+
+.timeline-footer {
+	margin-top: 20px;
+	text-align: center;
+}
+
+.timeline-footer>a {
+	font-size: 30px;
+	margin: 15px;
+}
+
+.pop-over {
+	display: none;
+	border-radius: 3px;
+	border: 1px solid #d6dadc;
+}
+
+.pop-over.is-shown {
+	display: block;
+}
+
+.pop-over.mod-search-over {
+	background-color: #edeff0 !important;
+}
+
+.pop-over-content {
+	margin-left: 5px;
+}
+
+.search-user-image {
+	width: 45px;
+}
+
+.search-user-item {
+	text-align: center;
+	display: -webkit-box;
+	padding: 3px;
+	height: 55px;
+}
+
+.search-user-item>h4 {
+	padding: 5px;
+	margin: 5px;
+	width: 70px;
+}
+
+.search-user-notfound {
+	text-align: center;
+	margin-top: -10px;
+}
+
+.member {
+	padding: 10px;
+}
+
+.userList {
+	width: 450px;
+	overflow-x: auto;
 }

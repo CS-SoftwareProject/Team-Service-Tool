@@ -220,7 +220,6 @@ function createFormAssignee(taget) {
 
 function createAssignee(target) {
 	var thisClass = this;
-	console.log("target ? : ", target);
 	$.ajax({
 		type:'get',
 		data:{

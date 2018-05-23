@@ -44,7 +44,9 @@ public class ReadCardListServlet extends HttpServlet {
       
       request.setAttribute("board", board);
       request.setAttribute("lists", cardlist);
+      request.setAttribute("projectName", projectName);
       request.setAttribute("isReadBoard", true);
+      request.setAttribute("isReadCard", true);
       logger.debug("ReadCardListServlet db에서 가져온 lists:" + cardlist);
       
       RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/jsp/card_list.jsp");

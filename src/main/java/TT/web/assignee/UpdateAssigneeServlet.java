@@ -36,7 +36,9 @@ public class UpdateAssigneeServlet extends HttpServlet{
      
       try {
         assigneeDAO.updateAssignee(assigneeNum, memberNum, roleNum);
-        assignee = assigneeDAO.getAsiggnee(memberNum, roleNum);
+        logger.debug("여기 통과함");
+        assignee = assigneeDAO.getAsiggnee(memberNum, roleNum, assigneeNum);
+        logger.debug("뭐야 : {}", assignee);
         Gson gson = new Gson();
         String gsonData = gson.toJson(assignee);
         logger.debug("update어싸이니 : " + gsonData);

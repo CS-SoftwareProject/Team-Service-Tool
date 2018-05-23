@@ -6,11 +6,14 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import TT.domain.project.Chat;
+import TT.domain.project.Image;
 import TT.domain.project.Project;
 import TT.domain.project.ProjectMember;
 import TT.domain.user.User;
@@ -24,11 +27,12 @@ public class ProjectDAO {
 
   public List getProjectMemberList(String projectName) {
     List list = new ArrayList();
-    String sql = "select PM_Num, users.userId, image, name, Project_Name, Power from project_members,users where Project_Name=? && project_members.userId=users.userId";
+    String sql = "select PM_Num, users.userId, image, name, Project_Name, Power from project_members,users where Project_Name=? && project_members.userId=users.userId && project_members.participation = ?";
     return jdbc.list(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
         pstmt.setString(1, projectName);
+        pstmt.setInt(2, 1);
       }
     }, new RowMapper() {
       @Override
@@ -46,11 +50,12 @@ public class ProjectDAO {
   }
 
   public List<Project> getProjectList(String userId) {
-    String sql = "select * from projects where Project_Name in (select Project_Name from project_members where userId=?)";
+    String sql = "select * from projects where Project_Name in (select Project_Name from project_members where userId=? && participation = ?)";
     return jdbc.list(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
         pstmt.setString(1, userId);
+        pstmt.setInt(2, 1);
       }
     }, new RowMapper() {
       @Override
@@ -76,13 +81,14 @@ public class ProjectDAO {
   }
 
   public void addprojectMember(Project project, User user, int Power) {
-    String sql = "insert into project_members (userId, Project_Name, Power) values (?,?,?)";
+    String sql = "insert into project_members (userId, Project_Name, Power, participation) values (?,?,?,?)";
     jdbc.executeUpdate(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
         pstmt.setString(1, user.getUserId());
         pstmt.setString(2, project.getProjectName());
         pstmt.setInt(3, Power);
+        pstmt.setInt(4, 1);
       }
     });
   }
@@ -109,7 +115,17 @@ public class ProjectDAO {
     });
   }
 
-  // Image set
+  public void addImage(Image image, String projectName) {
+    String sql = "insert into imagechats(Image_Path,Project_Name,Author) values(?,?,?)";
+    jdbc.executeUpdate(sql, new PreparedStatementSetter() {
+      @Override
+      public void setParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, image.getImagePath());
+        pstmt.setString(2, projectName);
+        pstmt.setString(3, image.getAuthor());
+      }
+    });
+  }
 
   public void removeImage(String Image_Path) {
     String sql = "delete from imagechats where Image_Path=?";
@@ -122,7 +138,7 @@ public class ProjectDAO {
   }
 
   public List getImageList(String projectName) {
-    String sql = "select Image_Path from imagechats where Project_Name=? order by ImageChat_Time asc";
+    String sql = "select Image_Path from imagechats where Project_Name= ? order by ImageChat_Time asc";
     return jdbc.list(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
@@ -137,11 +153,12 @@ public class ProjectDAO {
   }
 
   public List getUserList(String keyword, String projectName) {
-    String sql = "select * from users where not userId In (select userId from project_members where Project_Name = ?)";
+    //String sql = "select * from users where not userId In (select userId from project_members where Project_Name = ?)";
+    String sql = "select userId, name, birth, image from users where userId like '" + keyword.trim() + "%'" + " && not userId in (select userId from project_members where participation = ?)";
     return jdbc.list(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
-        pstmt.setString(1, projectName);
+        pstmt.setInt(1, 1);
       }
     }, new RowMapper() {
       @Override
@@ -150,6 +167,8 @@ public class ProjectDAO {
         user.setUserId(rs.getString("userId"));
         user.setName(rs.getString("name"));
         user.setBirth(rs.getString("birth"));
+        user.setImage(rs.getString("image"));
+        logger.debug("user : {}", user);
         return user;
       }
     });
@@ -196,11 +215,12 @@ public class ProjectDAO {
   }
 
   public User getProjectMember(String projectName) {
-    String sql = "select * from project_members where Project_name = ?";
+    String sql = "select * from project_members where Project_name = ? && participation = ?";
     return jdbc.executeQuery(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
         pstmt.setString(1, projectName);
+        pstmt.setInt(2, 1);
       }
     }, new RowMapper() {
       @Override
@@ -212,14 +232,83 @@ public class ProjectDAO {
     });
   }
 
+  public Image getByImageNum(int imageNum) {
+    String sql = "select * from imagechats where Image_Num = ?";
+    return jdbc.executeQuery(sql, new PreparedStatementSetter() {
+      @Override
+      public void setParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setInt(1, imageNum);
+      }
+    }, new RowMapper() {
+      @Override
+      public Image mapRow(ResultSet rs) throws SQLException {
+        if (!rs.next()) {
+          return null;
+        }
+        return new Image(rs.getString("Image_Path"), rs.getString("Author"));
+      }
+    });
+  }
 
+  public int getImageNum(String projectName, String author) {
+    String sql = "select * from imagechats where Project_Name = ? and Author = ?";
+    return jdbc.executeQuery(sql, new PreparedStatementSetter() {
+      @Override
+      public void setParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, projectName);
+        pstmt.setString(2, author);
+      }
+    }, new RowMapper() {
+      @Override
+      public Integer mapRow(ResultSet rs) throws SQLException {
+        if (!rs.next()) {
+          return 0;
+        }
+        return rs.getInt("Image_Num");
+      }
+    });
+  }
+
+  public void addChatMessage(Chat chat) {
+    logger.debug("ProjectDAO addChatMessage - Chat: {}", chat);
+    String sql = "insert into chats(chatMessage,chatTime,writeUser,Project_Name) values(?,?,?,?)";
+    jdbc.executeUpdate(sql, new PreparedStatementSetter() {
+      @Override
+      public void setParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, chat.getChatMessage());
+        pstmt.setLong(2, chat.getChatTime());
+        pstmt.setString(3, chat.getWriteUser());
+        pstmt.setString(4, chat.getProjectName());
+      }
+    });
+  }
+
+  public List<Chat> getChatMessages(String projectName) {
+    String sql = "select chatMessage,chatTime,chats.writeUser,users.image from chats,users where chats.writeUser=users.userId && Project_Name=? order by chatTime asc";
+    return jdbc.executeQuery(sql, new PreparedStatementSetter() {
+      @Override
+      public void setParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, projectName);
+      }
+    }, new RowMapper() {
+      @Override
+      public List<Chat> mapRow(ResultSet rs) throws SQLException {
+        List<Chat> chatList = new LinkedList<>();
+        while (rs.next()) {
+          chatList.add(new Chat(rs.getString("writeUser"), rs.getString("image"), rs.getLong("chatTime"), rs.getString("chatMessage")));
+        }
+        return chatList;
+      }
+    });
+  }
 
   public List<ProjectMember> getProjectDashMember(String projectName) {
-    String sql = "select userId, image from users where userId in (select userId from project_members where Project_Name = ?)";
+    String sql = "select userId, image from users where userId in (select userId from project_members where Project_Name = ? && participation = ?)";
     return jdbc.list(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
         pstmt.setString(1, projectName);
+        pstmt.setInt(2, 1);
       }
     }, new RowMapper() {
       @Override
@@ -261,6 +350,35 @@ public class ProjectDAO {
           return 0;
         }
         return rs.getInt("PM_Num");
+      }
+    });
+  }
+  
+  public void updatePrjMemberIsJoin(String joiner, String projectName) {    
+    String sql = "update project_members set participation = ? where userId = ? && Project_Name = ?";
+    jdbc.executeUpdate(sql, new PreparedStatementSetter() {
+      @Override
+      public void setParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setInt(1, 1);
+        pstmt.setString(2, joiner);
+        pstmt.setString(3, projectName);
+      }
+    });
+  }
+  
+  public String getInvitedUserId(String userId) {
+    String sql = "select userId from project_members where userId = ? && participation = ?";
+    return jdbc.executeQuery(sql, new PreparedStatementSetter() {
+      @Override
+      public void setParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, userId);
+        pstmt.setInt(2, 0);
+      }
+    }, new RowMapper() {
+      @Override
+      public String mapRow(ResultSet rs) throws SQLException {
+        if(rs.next()) return rs.getString("userId");
+        return null;
       }
     });
   }

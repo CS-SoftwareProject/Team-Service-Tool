@@ -26,19 +26,18 @@ public class LogInServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     UserDAO userDAO = new UserDAO();
-
     String userId = request.getParameter(SESSION_USER_ID);
     String password = request.getParameter("password");
-
     try {
       logger.debug("로그인 서블릿");
       User.login(userId, password);
       HttpSession session = request.getSession();
       User user = userDAO.getByUserId(userId);
+      
       session.setAttribute("user", user);
       logger.debug("로그인 처리성공");
-
-      response.sendRedirect("/project/projectlist");
+      
+      response.sendRedirect("/users/userDashBoard");
       
     } catch (UserNotFoundException e) {
       errorForward(request, response, "존재하지 않는 사용자 입니다.");
@@ -53,5 +52,4 @@ public class LogInServlet extends HttpServlet {
     RequestDispatcher rd = request.getRequestDispatcher("/login.jsp");
     rd.forward(request, response);
   }
-
 }

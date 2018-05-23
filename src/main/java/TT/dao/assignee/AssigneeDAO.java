@@ -73,15 +73,14 @@ public class AssigneeDAO {
     });
   }
 
-  public Assignee getAsiggnee(int pmNum, int roleNum) {
-    String sql = "select assigneeNum, (project_members.userId) as member, roles.roleName "
-        + "from assignees, project_members, roles"
-        + "where project_members.PM_Num = ? && roles.roleNum = ? && roles.roleNum = assignees.roleNum;";
+  public Assignee getAsiggnee(int pmNum, int roleNum, int assigneeNum) {
+    String sql = "select assigneeNum, (project_members.userId) as member, roles.roleName " + "from assignees, project_members, roles " + "where project_members.PM_Num = ? && assigneeNum = ? && roles.roleNum = ? && roles.roleNum = assignees.roleNum;";
     return jdbc.executeQuery(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
         pstmt.setInt(1, pmNum);
-        pstmt.setInt(2, roleNum);
+        pstmt.setInt(2, assigneeNum);
+        pstmt.setInt(3, roleNum);
       }
     }, new RowMapper() {
       @Override
@@ -117,19 +116,19 @@ public class AssigneeDAO {
       }
     });
   }
-  
-  public List<Assignee> getAssignees(int cardNum){
-    String sql="select * from assignees where Card_Num=?";
+
+  public List<Assignee> getAssignees(int cardNum) {
+    String sql = "select * from assignees where Card_Num=?";
     return jdbc.list(sql, new PreparedStatementSetter() {
-     @Override
-     public void setParameters(PreparedStatement pstmt) throws SQLException {
-       pstmt.setInt(1, cardNum);
-     }
-   }, new RowMapper() {
-     @Override
-     public Assignee mapRow(ResultSet rs) throws SQLException {
-       return new Assignee(rs.getInt("assigneeNum"),rs.getInt("PM_Num"),rs.getInt("roleNum"),rs.getInt("Card_Num"));
-     }
-   });
+      @Override
+      public void setParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setInt(1, cardNum);
+      }
+    }, new RowMapper() {
+      @Override
+      public Assignee mapRow(ResultSet rs) throws SQLException {
+        return new Assignee(rs.getInt("assigneeNum"), rs.getInt("PM_Num"), rs.getInt("roleNum"), rs.getInt("Card_Num"));
+      }
+    });
   }
 }

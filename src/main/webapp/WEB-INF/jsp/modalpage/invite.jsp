@@ -4,17 +4,6 @@
 <%@ page import="viser.project.*"%>
 <%@ page import="viser.user.*"%>
 
-<script>
-	function popup_msg(user) {
-		console.log("user" + user);
-		if (confirm(user + "님을 초대 하시겠습니까?")) {
-			location.href = "/projects/inviteUser?userId=" + user;
-		} else {
-			return;
-		}
-	}
-</script>
-
 <div class="modal fade" id="invite-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -56,11 +45,19 @@
 </div>
 
 <script>
+function nullkeyword() {
+	alert("값을 입력해 주세요.");
+}
+
 $('#search-btn').click(function(){
+	var key = $('#keyword').val();
+	if (key == '')
+		location.href='javascript:nullkeyword()';
+	else {
 	$.ajax({
 		type:'get',
 		data:{
-			keyword:$('#keyword').val()
+			keyword:key
 		},
 		dataType: "json",
 		url:"/projects/searchUser",
@@ -68,18 +65,22 @@ $('#search-btn').click(function(){
 			var str='';
 			if(data.length>0){
 				console.log("enter");
-				var i;
-				data.forEach(function(item){
+				data.forEach(function(data){
 					str+="<tr>";
 					str+="<td>";
-					str+="<button type='button' id='user-btn' class='btn btn-default' aria-label='Left Align' onclick='popup_msg(`"+item.userId+"`)'>";
+					if (data.invited) {
+						str+="<button type='button' disabled='true' id='user-btn' class='btn btn-default' aria-label='Left Align'>";
+					}
+					else {
+						str+="<button type='button' id='user-btn' class='btn btn-default' aria-label='Left Align' onclick='inviteUser(`"+data.user.userId+"`,$(this))'>";
+					}
 					str+="<span class='glyphicon glyphicon-envelope' aria-hidden='true' ></span>";
 					str+="</button>";
 					str+="</td>";
-					str+='<td>'+item.userId+'</td>';
-					str+='<td>'+item.name+'</td>';
-					str+='<td>'+item.age+'</td>';
-					str+='<td>'+item.gender+'</td>';
+					str+='<td>'+data.user.userId+'</td>';
+					str+='<td>'+data.user.name+'</td>';
+					str+='<td>'+data.user.birth+'</td>';
+					str+='<td><img src='+data.user.image+' style="width: 33px;"></td>';
 					str+="</tr>";
 					$('#data').html(str);
 				});	
@@ -87,12 +88,32 @@ $('#search-btn').click(function(){
 	
 			else{
 				str+='<tr>';
-				str+="<td colspan='5'><h2>No 'USER' Data</h2></td>";
+				str+='<td colspan="5">';
+				str+='<div class="alert alert-warning alert-dismissible" style="margin-top: 5%;">';
+				str+='<h4><i class="icon fa fa-warning"></i>Not Found Error</h4>';
+				str+='해당 검색 값에 대한 사용자 정보가 존재하지 않습니다.';
+				str+='</div>';
+				str+='</td>';
 				str+='</tr>';
 				$('#data').html(str);
 			}
 		},
 		error:ajaxError
 	});
+	}
 });	
+
+function inviteUser(user, target) {
+	if (confirm(user + "님을 초대 하시겠습니까?")) {
+		$.ajax({
+			type:'get',
+			url: "/projects/inviteUser?userId=" + user,
+			success:function(){
+				target.attr("disabled", true);
+			} 
+		});
+	} else {
+		return;
+	}
+}
 </script>
