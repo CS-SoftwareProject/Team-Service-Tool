@@ -40,8 +40,29 @@ public class CardDAO {
       }
     });
   }
-  
-  public List<Card> getCardsForGantt(int listNum){
+
+  public Card findByCardNum(int cardNum) throws SQLException {
+    String sql = "select * from cards where Card_Num = ?";
+    return jdbc.executeQuery(sql, new PreparedStatementSetter() {
+      @Override
+      public void setParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setInt(1, cardNum);
+      }
+    }, new RowMapper() {
+      @Override
+      public Card mapRow(ResultSet rs) throws SQLException {
+        if (rs.next()) {
+          Card card = new Card();
+          card.setSubject(rs.getString("Subject"));
+          // ...
+          return card;
+        }
+        return null;
+      }
+    });
+  }
+
+  public List<Card> getCardsForGantt(int listNum) {
     String sql = "select * from cards where List_Num=? order by taskOrder asc";
     return jdbc.list(sql, new PreparedStatementSetter() {
       @Override
@@ -56,10 +77,9 @@ public class CardDAO {
         card.setUserId(rs.getString("userId"));
         card.setSubject(rs.getString("Subject"));
         card.setContent(rs.getString("Content"));
-        if(rs.getInt("progress") != -1) {
+        if (rs.getInt("progress") != -1) {
           card.setProgress(rs.getInt("progress"));
-        }
-        else {
+        } else {
           card.setProgress(0);
         }
         card.setLevel(rs.getInt("level"));
@@ -98,7 +118,7 @@ public class CardDAO {
     });
   }
 
-  public int addCard(Card card,int taskOrder) {
+  public int addCard(Card card, int taskOrder) {
     String sql = "insert into cards(userId, Subject,Content ,List_Num, Card_Order,progress,level,status,canWrite,start,duration,hasChild,taskOrder) values(?,?,?,?,(select max(Card_Order)+1 from cards as cardAdd where List_Num=?),?,?,?,?,?,?,?,?)";
     return jdbc.generatedExecuteUpdate(sql, new PreparedStatementSetter() {
       @Override
@@ -116,18 +136,18 @@ public class CardDAO {
         pstmt.setInt(11, card.getDuration());
         pstmt.setBoolean(12, card.isHasChild());
         pstmt.setInt(13, taskOrder);
-       }
+      }
     }, new RowMapper() {
       @Override
       public Integer mapRow(ResultSet rs) throws SQLException {
-        if(rs.next())
+        if (rs.next())
           return rs.getInt(1);
         return null;
       }
     });
   }
-  
-  public void addBoardCardForGantt(String userId,String subject,int listNum) {
+
+  public void addBoardCardForGantt(String userId, String subject, int listNum) {
     String sql = "call CreateBoardTask(?,?,?)";
     jdbc.executeUpdate(sql, new PreparedStatementSetter() {
       @Override
@@ -135,28 +155,28 @@ public class CardDAO {
         pstmt.setString(1, userId);
         pstmt.setString(2, subject);
         pstmt.setInt(3, listNum);
-       }
+      }
     });
   }
-  
+
   public void removeCard(int num) {
     // delete card
-    String sql="select List_Num,Card_Order from cards where Card_Num=?"; 
-    Card deleteCard=jdbc.executeQuery(sql, new PreparedStatementSetter() {
+    String sql = "select List_Num,Card_Order from cards where Card_Num=?";
+    Card deleteCard = jdbc.executeQuery(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
         pstmt.setInt(1, num);
       }
-    },new RowMapper() {
+    }, new RowMapper() {
       @Override
       public Card mapRow(ResultSet rs) throws SQLException {
-        while(rs.next()){
-          return new Card(rs.getInt(1),rs.getInt(2));
+        while (rs.next()) {
+          return new Card(rs.getInt(1), rs.getInt(2));
         }
         return null;
       }
     });
-    
+
     sql = "delete from cards where Card_Num = ?";
     jdbc.executeUpdate(sql, new PreparedStatementSetter() {
       @Override
@@ -217,8 +237,8 @@ public class CardDAO {
     });
   }
 
-  public void updateCard(Card card,int taskOrder){
-    String sql="update cards set userId=?, Subject=?,Content=?,Modify_Time=?,progress=?,level=?,status=?,start=?,duration=?,hasChild=?,taskOrder=?,canWrite=? where Card_Num=?";
+  public void updateCard(Card card, int taskOrder) {
+    String sql = "update cards set userId=?, Subject=?,Content=?,Modify_Time=?,progress=?,level=?,status=?,start=?,duration=?,hasChild=?,taskOrder=?,canWrite=? where Card_Num=?";
     jdbc.executeUpdate(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
@@ -229,7 +249,7 @@ public class CardDAO {
         pstmt.setInt(5, card.getProgress());
         pstmt.setInt(6, card.getLevel());
         pstmt.setString(7, card.getStatus());
-        pstmt.setLong(8,card.getStart());
+        pstmt.setLong(8, card.getStart());
         pstmt.setInt(9, card.getDuration());
         pstmt.setBoolean(10, card.hasChild());
         pstmt.setInt(11, taskOrder);

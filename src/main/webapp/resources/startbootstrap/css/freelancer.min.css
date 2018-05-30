@@ -297,29 +297,93 @@ header.masthead h2 {
 }
 
 .floating-label-form-group
+
+
+
+
+
+
 :not
+
+
+
  
+
+
+
 (
 :first-child
+
+
+
  
+
+
+
 ){
 padding-left
+
+
+
+
+
+
 :
+
+
+
  
+
+
+
 14
 px
-;
 
-	
+
+
+
+
+
+;
 border-left
+
+
+
+
+
+
 :
+
+
+
  
+
+
+
 1
 px
+
+
+
  
+
+
+
 solid
+
+
+
  
+
+
+
 #e9ecef
+
+
+
+
+
+
 
 
 }
@@ -397,11 +461,32 @@ a:active, a:focus, a:hover {
 
 .timeline-header {
 	font-size: 30px;
-	text-align: center;
+	display: -webkit-box;
 }
 
-.timeline-body {
-	text-align: center;
+.btn-danger {
+	margin-left: 10px;
+	margin-top: -3px;
+}
+
+.timeline-comment-delete {
+	padding: 10px;
+	margin-left: -15px;
+}
+
+.timeline-comment {
+	background-color: #EFF1F3;
+	margin: 2px;
+	padding: 8px;
+	width: 810px;
+}
+
+.comment-delete-form {
+	width: 100px;
+}
+
+.comment-item {
+	display: -webkit-box;
 }
 
 .timeline-footer {

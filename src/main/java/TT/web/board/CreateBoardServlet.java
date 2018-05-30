@@ -40,12 +40,14 @@ public class CreateBoardServlet extends HttpServlet {
     projectName = URLEncoder.encode(projectName, "UTF-8");
 
     try {
-      boardDAO.addBoard(board);
+      int thisBoardNum = boardDAO.addBoard(board);
+      boardDAO.addBoardActivity(thisBoardNum);
+      String activity = "<a href='#'>'" + boardName + "'</a> 보드가 <a href='#'><b>생성되었습니다.</b></a>";
+      boardDAO.addBoardActivityLog(activity, thisBoardNum);
+      
       response.sendRedirect("/board/boardlist?projectName=" + projectName);
-
     } catch (Exception e) {
       logger.debug("Board create fail : " + e);
     }
-
   }
 }

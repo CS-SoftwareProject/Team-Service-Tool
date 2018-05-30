@@ -18,15 +18,16 @@ public class AssigneeDAO {
   private static final Logger logger = LoggerFactory.getLogger(AssigneeDAO.class);
   JdbcTemplate jdbc = new JdbcTemplate();
 
-  public int addAssignee(String assigneeMember, String roleName, int boardNum, int cardNum) {
-    String sql = "insert into assignees (PM_Num, roleNum, Card_Num) values (" + "(select PM_Num from project_members where userId = ?)," + "(select roleNum from roles where roleName = ? and Board_Num = ?), ?)";
+  public int addAssignee(String assigneeMember, String projectName, String roleName, int boardNum, int cardNum) {
+    String sql = "insert into assignees (PM_Num, roleNum, Card_Num) values (" + "(select PM_Num from project_members where userId = ? && Project_Name = ?)," + "(select roleNum from roles where roleName = ? and Board_Num = ?), ?)";
     return jdbc.generatedExecuteUpdate(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
         pstmt.setString(1, assigneeMember);
-        pstmt.setString(2, roleName);
-        pstmt.setInt(3, boardNum);
-        pstmt.setInt(4, cardNum);
+        pstmt.setString(2, projectName);
+        pstmt.setString(3, roleName);
+        pstmt.setInt(4, boardNum);
+        pstmt.setInt(5, cardNum);
       }
     }, new RowMapper() {
       @Override
@@ -128,6 +129,28 @@ public class AssigneeDAO {
       @Override
       public Assignee mapRow(ResultSet rs) throws SQLException {
         return new Assignee(rs.getInt("assigneeNum"), rs.getInt("PM_Num"), rs.getInt("roleNum"), rs.getInt("Card_Num"));
+      }
+    });
+  }
+
+  public Assignee findByAssigneeNum(String projectName) {
+    String sql = "select Card_Num, project_members.userId, roles.roleName from assignees, roles, project_members where assignees.PM_Num = project_members.PM_Num && assignees.roleNum = roles.roleNum && Project_Name = ?";
+    return jdbc.executeQuery(sql, new PreparedStatementSetter() {
+      @Override
+      public void setParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, projectName);
+      }
+    }, new RowMapper() {
+      @Override
+      public Assignee mapRow(ResultSet rs) throws SQLException {
+        if (rs.next()) {
+          Assignee assignee = new Assignee();
+          assignee.setCardNum(rs.getInt("Card_Num"));
+          assignee.setUserId(rs.getString("userId"));
+          assignee.setRoleName(rs.getString("roleName"));
+          return assignee;
+        }
+        return null;
       }
     });
   }

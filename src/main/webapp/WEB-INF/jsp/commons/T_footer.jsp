@@ -75,7 +75,7 @@
 	              <h3 class="box-title">채팅창</h3>
 	
 	              <div class="box-tools pull-right">
-	                <span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">3</span>
+	                <!-- <span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">3</span> -->
 	                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
 	                </button>
 	                <button type="button" class="btn btn-box-tool" onclick="getProjectMember()" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle">
@@ -179,8 +179,8 @@
 					else{
 						temp+="<div class="+"'direct-chat-msg'>";
 				        temp+="<div class="+"'direct-chat-info clearfix'>";
-				          temp+="<span class="+"'direct-chat-name pull-left'>"+item.writeUser+"</span>";
-				          temp+="<span class="+"'direct-chat-timestamp pull-right'>"+new Date(item.chatTime).format("y-MM-dd HH:mm")+"</span>";
+			            temp+="<span class="+"'direct-chat-name pull-left'>"+item.writeUser+"</span>";
+			            temp+="<span class="+"'direct-chat-timestamp pull-right'>"+new Date(item.chatTime).format("y-MM-dd HH:mm")+"</span>";
 				        temp+="</div>";
 				        temp+="<img class="+"'direct-chat-img'"+ "src='"+item.userImage+"' alt='User Image'>";
 				        temp+="<div class="+"'direct-chat-text'>";
@@ -313,9 +313,7 @@
   		url:'/users/readProfile',
   		dataType:'json',
   		success:function (data) {
-			console.log("JSON DATA log : ", data);
 			var targetUser = JSON.parse(data[0]);
-			console.log("JS userProject List : ", targetUser);
 			$('#profile-userId').html(targetUser.userId);
 			$('#profile-userName').html(targetUser.name);
 			$('#profile-userBirth').html(targetUser.birth);
@@ -324,10 +322,10 @@
 			var userProject = JSON.parse(data[1]);
 			var str='';
 			var num=0;
-			userProject.forEach(function(targetUser){
+			userProject.forEach(function(item){
 				str+="<tr>";
 				str+="<td>" + ++num + "</td>";
-				str+="<td><a>" + userProject[0].projectName + "</a></td>";
+				str+="<td><a>" + item.projectName + "</a></td>";
 				$('#profile-joinlist').html(str);
 			});
 	  		},

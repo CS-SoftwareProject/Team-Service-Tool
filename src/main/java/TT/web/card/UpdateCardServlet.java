@@ -12,9 +12,12 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import TT.dao.board.BoardDAO;
 import TT.dao.card.CardDAO;
 import TT.domain.card.Card;
 import TT.domain.user.User;
+import TT.service.support.SessionUtils;
+import TT.service.support.Activitiy.BoardActivitivationFactory;
 
 @WebServlet("/cards/updatecard")
 public class UpdateCardServlet extends HttpServlet {
@@ -23,8 +26,8 @@ public class UpdateCardServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     HttpSession session = request.getSession();
-    User sessionUser = (User)session.getAttribute("user");
-    
+    User sessionUser = (User) session.getAttribute("user");
+
     int cardNum = Integer.parseInt(request.getParameter("num"));
     String subject = request.getParameter("subject");
     String content = request.getParameter("content");
@@ -37,9 +40,15 @@ public class UpdateCardServlet extends HttpServlet {
     card.setContent(content);
 
     CardDAO cardDAO = new CardDAO();
+    BoardDAO boardDAO = new BoardDAO();
     try {
-      logger.debug("테스트 : " + card);
+      Card oldCard = cardDAO.findByCardNum(cardNum);
       cardDAO.updateCard(card);
+
+      int boardNum = SessionUtils.getIntegerValue(session, "boardNum");
+      BoardActivitivationFactory factory = new BoardActivitivationFactory(userId);
+      boardDAO.addBoardActivityLog(factory.Activity(oldCard, "수정"), boardNum);;
+      
     } catch (Exception e) {
       logger.debug("updatecard Servlet error" + e);
     }

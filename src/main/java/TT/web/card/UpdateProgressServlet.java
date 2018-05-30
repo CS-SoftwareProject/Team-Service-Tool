@@ -19,8 +19,8 @@ import TT.dao.card.CardDAO;
 import TT.domain.card.Card;
 
 @WebServlet("/cards/cuProgress")
-public class updateProgressServlet extends HttpServlet{
-  private static final Logger logger = LoggerFactory.getLogger(updateProgressServlet.class);
+public class UpdateProgressServlet extends HttpServlet{
+  private static final Logger logger = LoggerFactory.getLogger(UpdateProgressServlet.class);
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     BoardDAO boardDAO = new BoardDAO();

@@ -1,31 +1,35 @@
 package TT.domain.timeline;
 
 public class Timeline {
-	
-	private int timelineNum;
-	private String projectName;
 
-	public Timeline() {
-	}
-	
-	public Timeline(String projectName) {
-		super();
-		this.projectName = projectName;
-	}
+  private int timelineNum;
+  private String projectName;
 
-	public int getTimelineNum() {
-		return timelineNum;
-	}
+  public Timeline() {}
 
-	public void setTimelineNum(int timelineNum) {
-		this.timelineNum = timelineNum;
-	}
+  public Timeline(String projectName) {
+    super();
+    this.projectName = projectName;
+  }
 
-	public String getProjectName() {
-		return projectName;
-	}
+  public int getTimelineNum() {
+    return timelineNum;
+  }
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
+  public void setTimelineNum(int timelineNum) {
+    this.timelineNum = timelineNum;
+  }
+
+  public String getProjectName() {
+    return projectName;
+  }
+
+  public void setProjectName(String projectName) {
+    this.projectName = projectName;
+  }
+
+  @Override
+  public String toString() {
+    return "Timeline [timelineNum=" + timelineNum + ", projectName=" + projectName + "]";
+  }
 }

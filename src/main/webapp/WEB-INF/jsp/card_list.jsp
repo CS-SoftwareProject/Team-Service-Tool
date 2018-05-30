@@ -82,7 +82,7 @@
                                    </ul>
                                 </div>
                              </div>
-                             <button type="button" class="btn btn-cardlist" href="#"  onclick="location.href='/lists/removeList?boardNum=${param.boardNum}&listOrder=${list.listOrder }'" style = "margin-bottom: 5px;">삭제</button>
+                             <button type="button" class="btn btn-cardlist" href="#"  onclick="location.href='/lists/removeList?boardNum=${param.boardNum}&listOrder=${list.listOrder}&listName=${list.listName}'" style = "margin-bottom: 5px;">삭제</button>
                           </li>      
                        </c:forEach>
                     </ul>

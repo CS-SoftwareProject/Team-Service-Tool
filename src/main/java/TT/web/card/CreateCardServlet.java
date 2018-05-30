@@ -12,8 +12,11 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import TT.dao.board.BoardDAO;
 import TT.dao.card.CardDAO;
 import TT.domain.card.Card;
+import TT.service.support.SessionUtils;
+import TT.service.support.Activitiy.BoardActivitivationFactory;
 
 @WebServlet("/cards/createcard")
 public class CreateCardServlet extends HttpServlet {
@@ -30,11 +33,17 @@ public class CreateCardServlet extends HttpServlet {
     int listNum = Integer.parseInt(request.getParameter("listNum"));
     int cardOrder = Integer.parseInt(request.getParameter("cardOrder"));
     int progress = Integer.parseInt(request.getParameter("progress"));
-    
+
     Card card = new Card(userId, subject, content, listNum, cardOrder ,progress);
     logger.debug("CreateCardServlet 에서 받은 card객체 : " + card.toString());
     try {
       cardDAO.addCard(card);
+      
+      BoardDAO boardDAO = new BoardDAO();
+      int boardNum = SessionUtils.getIntegerValue(session, "boardNum");
+      BoardActivitivationFactory factory = new BoardActivitivationFactory(userId);
+      boardDAO.addBoardActivityLog(factory.Activity(card, "추가"), boardNum);
+      
     } catch (Exception e) {
       logger.debug("CreateCardServlet error:" + e.getMessage());
     }

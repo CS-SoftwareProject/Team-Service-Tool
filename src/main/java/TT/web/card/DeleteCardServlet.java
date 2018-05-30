@@ -14,6 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import TT.dao.board.BoardDAO;
 import TT.dao.card.CardDAO;
+import TT.domain.card.Card;
+import TT.domain.user.User;
+import TT.service.support.SessionUtils;
+import TT.service.support.Activitiy.BoardActivitivationFactory;
 
 @WebServlet("/cards/removecard")
 public class DeleteCardServlet extends HttpServlet {
@@ -24,16 +28,22 @@ public class DeleteCardServlet extends HttpServlet {
 
     int num = Integer.parseInt(request.getParameter("num"));
     int listNum = Integer.parseInt(request.getParameter("listNum"));
-    int cardOrder = Integer.parseInt(request.getParameter("cardOrder"));
 
     HttpSession session = request.getSession();
     CardDAO cardDAO = new CardDAO();
     BoardDAO boardDAO = new BoardDAO();
 
     try {
+      User sessionUser = (User)SessionUtils.getObjectValue(session, "user");
+      int boardNum = SessionUtils.getIntegerValue(session, "boardNum");
+      Card card = cardDAO.findByCardNum(num);
+
       cardDAO.removeCard(num);
+
+      BoardActivitivationFactory factory = new BoardActivitivationFactory(sessionUser.getUserId());
+      boardDAO.addBoardActivityLog(factory.Activity(card, "삭제"), boardNum);
+     
       boardDAO.updateBoardProgress(listNum);
-      
       request.removeAttribute("projectCount");
       request.removeAttribute("roleCount");
       request.removeAttribute("userProjectList");

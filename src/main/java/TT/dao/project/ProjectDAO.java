@@ -61,7 +61,7 @@ public class ProjectDAO {
       @Override
       public Project mapRow(ResultSet rs) throws SQLException {
         Project project = new Project();
-        project.setProjectName(rs.getString("Project_name"));
+        project.setProjectName(rs.getString("Project_Name"));
         project.setProjectDate(rs.getDate("Project_Date"));
         return project;
       }

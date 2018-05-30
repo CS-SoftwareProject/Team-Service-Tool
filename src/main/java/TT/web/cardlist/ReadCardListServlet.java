@@ -39,7 +39,8 @@ public class ReadCardListServlet extends HttpServlet {
       session.getAttribute("projectName");
       session.setAttribute("boardNum", boardNum);
       
-      board = boardDAO.getByBoardNum(boardNum);
+      board = boardDAO.findByBoardNum(boardNum);
+      board.setBoardNum(boardNum);
       cardlist = cardListDAO.getLists(boardNum);
       
       request.setAttribute("board", board);

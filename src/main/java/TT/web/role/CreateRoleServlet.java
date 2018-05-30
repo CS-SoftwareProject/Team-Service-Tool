@@ -15,9 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
+import TT.dao.board.BoardDAO;
 import TT.dao.role.RoleDAO;
 import TT.domain.role.Role;
+import TT.domain.user.User;
 import TT.service.support.SessionUtils;
+import TT.service.support.Activitiy.BoardActivitivationFactory;
 
 @WebServlet("/roles/createRole")
 public class CreateRoleServlet extends HttpServlet{
@@ -33,6 +36,12 @@ public class CreateRoleServlet extends HttpServlet{
     
     try {
       Role role = roleDAO.addRole(roleName, boardNum);
+      
+      BoardDAO boardDAO = new BoardDAO(); 
+      User sessionUser = (User)SessionUtils.getObjectValue(session, "user");
+      BoardActivitivationFactory factory = new BoardActivitivationFactory(sessionUser.getUserId());
+      boardDAO.addBoardActivityLog(factory.Activity(role, "추가"), boardNum);
+      
       logger.debug("Role : {}", role);
       Gson gson = new Gson();
       String gsonData = gson.toJson(role);

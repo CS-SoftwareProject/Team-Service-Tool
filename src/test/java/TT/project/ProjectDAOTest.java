@@ -1,4 +1,4 @@
-/*package TT.project;
+package TT.project;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,11 +14,22 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import TT.dao.card.CardDAO;
+import TT.dao.message.MessageDAO;
 import TT.dao.project.ProjectDAO;
 import TT.dao.user.UserDAO;
+import TT.domain.assignee.Assignee;
+import TT.domain.card.Card;
+import TT.domain.message.Message;
 import TT.domain.project.Image;
 import TT.domain.project.Project;
 import TT.domain.user.User;
+import TT.service.support.Activitiy.BoardActivitivationFactory;
 import TT.user.UserTest;
 
 public class ProjectDAOTest {
@@ -133,7 +144,7 @@ public class ProjectDAOTest {
     assertNotNull(list);
     logger.debug("imageList : {}", list);
   }
-  
+
   @Test
   public void searchUserList() {
     List<User> list = new ArrayList<User>();
@@ -143,24 +154,24 @@ public class ProjectDAOTest {
     JsonElement el = gson.toJsonTree(1);
     JsonArray arr = new JsonArray();
     String invitedUserId;
-    for(int i = 0; i < list.size(); i++) {
+    for (int i = 0; i < list.size(); i++) {
       invitedUserId = projectDAO.getInvitedUserId(list.get(i).getUserId());
-      
+
       el = gson.toJsonTree(list.get(i));
       JsonObject obj = new JsonObject();
       obj.add("user", el);
-      
+
       if (invitedUserId == null)
         obj.add("invited", gson.toJsonTree(false));
       else
         obj.add("invited", gson.toJsonTree(true));
-      
+
       arr.add(obj);
     }
-    logger.debug("debug arr : {} " , arr);
+    logger.debug("debug arr : {} ", arr);
     logger.debug("debug : " + arr.get(0));
   }
-  
+
   @Test
   public void getrealTimeSearch() throws Exception {
     List<User> list = new ArrayList<User>();
@@ -168,7 +179,7 @@ public class ProjectDAOTest {
     list = msgDAO.getRealTimeUserList("t");
     logger.debug("list ? {}", list);
   }
-  
+
   @Test
   public void getLastMessageList() throws Exception {
     MessageDAO msgDAO = new MessageDAO();
@@ -194,4 +205,29 @@ public class ProjectDAOTest {
     logger.debug("last message arr ? {}", arr);
     String s = gson.toJson(arr);
   }
-}*/
+
+  @Test
+  public void getUserProjectList() throws SQLException {
+    Card card = new Card();
+    CardDAO dao = new CardDAO();
+    card = dao.findByCardNum(3);
+    logger.debug("card : {}", card);
+  }
+
+  @Test
+  public void boardActivityTest() {
+    Card card = new Card();
+    card.setSubject("댓냐");
+    Assignee assignee = new Assignee();
+    Assignee assignee2 = new Assignee();
+    assignee.setUserId("test");
+    assignee.setRoleName("매니저");
+    assignee2.setUserId("test2");
+    assignee2.setRoleName("매니저2");
+    BoardActivitivationFactory factory = new BoardActivitivationFactory("테스터");
+    logger.debug("" + factory.Activity(card, "삭제"));
+    logger.debug("" + factory.activityInCard("TestCard", assignee, "삭제"));
+    logger.debug("" + factory.updateActivityInCard("TestCard", assignee, assignee2));
+    logger.debug("" + factory.updateActivity(card, "Old", "New"));
+  }
+}

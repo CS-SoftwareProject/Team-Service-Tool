@@ -16,8 +16,13 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 
 import TT.dao.assignee.AssigneeDAO;
+import TT.dao.board.BoardDAO;
+import TT.dao.card.CardDAO;
 import TT.domain.assignee.Assignee;
+import TT.domain.card.Card;
+import TT.domain.user.User;
 import TT.service.support.SessionUtils;
+import TT.service.support.Activitiy.BoardActivitivationFactory;
 
 @WebServlet("/assignees/updateAssignee")
 public class UpdateAssigneeServlet extends HttpServlet{
@@ -35,13 +40,24 @@ public class UpdateAssigneeServlet extends HttpServlet{
       logger.debug("UpdateAssigneeServlet Para :\nassigneeNum : " + assigneeNum + "\nmemberNum : " + memberNum + "\nroleNum : " + roleNum + "\nboardNum : " + boardNum);
      
       try {
+        Assignee oldAssignee = assigneeDAO.findByAssigneeNum(SessionUtils.getStringValue(session, "projectName"));
+        
         assigneeDAO.updateAssignee(assigneeNum, memberNum, roleNum);
-        logger.debug("여기 통과함");
         assignee = assigneeDAO.getAsiggnee(memberNum, roleNum, assigneeNum);
-        logger.debug("뭐야 : {}", assignee);
+        
+        CardDAO cardDAO = new CardDAO();
+        BoardDAO boardDAO = new BoardDAO();
+        User sessionUser = (User)SessionUtils.getObjectValue(session, "user");
+        BoardActivitivationFactory factory = new BoardActivitivationFactory(sessionUser.getUserId());
+        Card card = cardDAO.findByCardNum(oldAssignee.getCardNum());
+        
+        logger.debug("담당자 추가 Acitivity ?" + factory.updateActivityInCard(card.getSubject(), oldAssignee, assignee));
+        
+        boardDAO.addBoardActivityLog(factory.updateActivityInCard(card.getSubject(), oldAssignee, assignee), boardNum);
+        
         Gson gson = new Gson();
         String gsonData = gson.toJson(assignee);
-        logger.debug("update어싸이니 : " + gsonData);
+        logger.debug("updated Assginee : " + gsonData);
         PrintWriter out = response.getWriter();
         out.println(gsonData);
       } catch (Exception e) {

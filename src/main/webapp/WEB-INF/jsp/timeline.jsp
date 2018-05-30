@@ -28,27 +28,7 @@
     <!-- Main content -->
     <section class="content">
     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#createTimeline">글쓰기</button>
-    <%@include file = "/WEB-INF/jsp/modalpage/create_timeline_form.jsp"%>
-<%--       <div class = "row">
-      <form method = "post" action = "/timelines/createContent">
-          <table class = "table table-stripeds" style = "text-align : center; border : 1px solid #dddddd">
-              <thead>
-                  <tr>
-                      <th colspan = "2" style = "background-color: #eeeeee; text-algin: center;">타임라인 글쓰기</th>
-                  </tr>   
-              </thead>
-              <tbody>
-                  <tr>
-                      <td><textarea class = "form-control" placeholder ="글 내용" name = "timeLineContent" maxlength = "2048" style = "height : 150px;"> </textarea></td>
-                  </tr>
-              </tbody>
-          </table>
-          <input type = "hidden" name = "userId" value = "${user.userId}">
-          <input type = "hidden" name = "timelineNum" value = "${timelineNum}">
-          <input type = "submit" class = "btn btn-primary pull-right" value = "글쓰기">
-      </form>
-      </div> 
-      <!-- row --> --%>
+      <!-- row -->
       <div class="row">
         <div class="col-md-12">
           <!-- The time line -->
@@ -71,20 +51,21 @@
              	<div class="timeline-item">
                 <span class="time"><i class="fa fa-clock-o"></i> ${list.getTimeLineContent_date().substring(11,16)}</span>
 
-                <h3 class="timeline-header"><a href="#">${list.userId}</a>님이 글을 남겼습니다.</h3>
+                <h3 class="timeline-header"><a href="#">${list.userId}</a>님이 글을 남겼습니다.
+ 				 <c:if test = "${list.getUserId() == user.userId}">
+           		 <form method = "post" action = "/timelines/deleteContent">
+                 <input type = "hidden" name = "timelineNum" value = "${list.getTimeLineContent_Num()}">
+           		 <input type = "submit" class = "btn btn-danger btn-xs" value = "Delete">
+           		 </form>
+           		 </c:if>
+                </h3>
+
                
                 <div class="timeline-body">
                	${list.getTimeLineContent()}      
-               	    	
                 </div>
                 <div class="timeline-footer">
-                
-	               	 <c:if test = "${list.getUserId() == user.userId}">
-	               	 <form method = "post" action = "/timelines/deleteContent">
-	                  <input type = "hidden" name = "timelineNum" value = "${list.getTimeLineContent_Num()}">
-	               	  <input type = "submit" class = "btn btn-danger btn-xs" value = "Delete">
-	               	 </form>
-	               	 </c:if>
+           
                 </div>
                 
 
@@ -102,19 +83,24 @@
 	       			<c:choose>
 	          	 		<c:when test="${not empty CLlist }">
 							<c:forEach var="comment" items="${CLlist}" varStatus="status">
-								<c:if test = "${comment.getTimeLineContent_Num() == list.getTimeLineContent_Num()}">		
-										<div style = "background-color:#EFF1F3; margin : 2px"> 
-											<span style = "color:#8AC8F3; font-weight: bold;">${comment.getUserId()}</span>
-											<span style = "color : black"> ${comment.getComment_Content()} </span>
-											 <span class="time" style = "float : right"><i class="fa fa-clock-o"></i> ${comment.getComment_date()}</span>
+								<c:if test = "${comment.getTimeLineContent_Num() == list.getTimeLineContent_Num()}">
+									<div class = "comment-item">		
+										<div class = "timeline-comment">
+											<a href="#" onclick="javascript:showUserProfile($(this))" style = "color:#8AC8F3; font-weight: bold;">${comment.getUserId()}
+											<input type="hidden" name="userId" value="${comment.getUserId()}">
+											</a>
+											<span style = "color : black; font-weight: 500"> ${comment.getComment_Content()} </span>
+											<span class="time" style = "float : right"><i class="fa fa-clock-o"></i> ${comment.getComment_date()}</span>
+										</div>
+										<div class = "comment-delete-form">
 											 <c:if test = "${comment.getUserId() == user.userId}">
-							               	 <form method = "post" action = "/timelines/deleteComment">
+							               	 <form class="timeline-comment-delete" method = "post" action = "/timelines/deleteComment">
 							                  <input type = "hidden" name = "commentNum" value = "${comment.getComment_Num()}">
-							               	  <input type = "submit" class = "btn btn-reddit  btn-xs " style = "font-size: 3px" value = "Delete">
+							               	  <input type = "submit" class = "btn btn-danger btn-xs " style = "font-size: 3px" value = "Delete">
 							               	 </form>
 							               	 </c:if>
 										</div>
-										
+									</div>	
 	            				</c:if>	
 	            			</c:forEach>
 	            		</c:when>
@@ -139,3 +125,4 @@
  <!-- /.content-wrapper -->
   
 <%@include file="/WEB-INF/jsp/commons/T_footer.jsp"%>
+<%@include file = "/WEB-INF/jsp/modalpage/create_timeline_form.jsp"%>

@@ -65,7 +65,7 @@ desired effect
   <header class="main-header">
 
     <!-- Logo -->
-    <a href="/main.jsp" class="logo">
+    <a href="/users/userDashBoard" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>TT</b></span>
       <!-- logo for regular state and mobile devices -->
@@ -137,7 +137,7 @@ desired effect
             </ul>
           </li>
           
-          <c:if test="${isReadBoard}">
+          <c:if test="${isReadCard}">
 	          <!-- Control Sidebar Toggle Button -->
 	          <li>
 	            <a href="#" data-toggle="control-sidebar"><i class="glyphicon glyphicon-option-horizontal"></i></a>
@@ -209,7 +209,7 @@ desired effect
           </a>
           <ul class="treeview-menu">
 	        <li><a href="/board/boardlist?projectName=${projectName}"><i class="fa fa-circle-o"></i>보드 목록</a></li>
-	        <li><a href="#"><i class="fa fa-circle-o"></i>보드 로그</a></li>
+	        <li><a href="/boards/loglist?boardNum=${board.boardNum}"><i class="fa fa-circle-o"></i>보드 로그</a></li>
           </ul>
         </li>
       </ul>

@@ -38,7 +38,7 @@ public class ReadTimelineServlet extends HttpServlet {
     TimelineDAO timelineDAO = new TimelineDAO();
     TimelineContentsDAO timelinecontentDAO = new TimelineContentsDAO();
     TimelineCommentsDAO timelinecommentDAO = new TimelineCommentsDAO();
-
+    
     String projectName = sessionUtils.getStringValue(session, "projectName");
     timeline = timelineDAO.getTimeline(projectName);
     int timelineNum = timeline.getTimelineNum();
@@ -47,6 +47,7 @@ public class ReadTimelineServlet extends HttpServlet {
     timelinecommentlist = timelinecommentDAO.getContent(timelineNum);
 
     request.setAttribute("isReadBoard", true);
+    request.setAttribute("isTimeLine", true);
     request.setAttribute("TLlist", timelinecontentlist);
     request.setAttribute("CLlist", timelinecommentlist);
     request.setAttribute("projectName", projectName);

@@ -39,7 +39,7 @@
               <!-- /.mailbox-read-info -->
               <div class="mailbox-controls with-border text-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-container="body" title="Delete">
+                  <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-container="body" title="Delete" onclick="removeMsg();">
                     <i class="fa fa-trash-o"></i></button>
                   <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-container="body" title="Reply">
                     <i class="fa fa-reply"></i></button>
@@ -57,8 +57,8 @@
               <!-- /.mailbox-read-message -->
             </div>
             <!-- /.box-body -->
-            <div class="box-footer">
-              <ul class="mailbox-attachments clearfix">
+<!--             <div class="box-footer">
+                <ul class="mailbox-attachments clearfix">
                 <li>
                   <span class="mailbox-attachment-icon"><i class="fa fa-file-pdf-o"></i></span>
 
@@ -104,12 +104,12 @@
                   </div>
                 </li>
               </ul>
-            </div>
+            </div -->
             <!-- /.box-footer -->
             <div class="box-footer">
-              <div class="pull-right">
-                <button type="button" class="btn btn-default" onclick="location.href='/users/messagelist'"><i class="fa fa-reply"></i> Reply</button>
-                <button type="button" class="btn btn-default"><i class="fa fa-share"></i> Forward</button>
+             <div class="pull-right">
+<!--                 <button type="button" class="btn btn-default" onclick="location.href='/users/messagelist'"><i class="fa fa-reply"></i> Reply</button>
+                <button type="button" class="btn btn-default"><i class="fa fa-share"></i> Forward</button> -->
               </div>
               <button type="button" class="btn btn-default" onclick="removeMsg();"><i class="fa fa-trash-o"></i> Delete</button>
               <button type="button" class="btn btn-default"><i class="fa fa-print"></i> Print</button>

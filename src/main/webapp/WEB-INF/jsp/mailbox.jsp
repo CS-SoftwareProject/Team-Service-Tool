@@ -15,7 +15,7 @@
     <section class="content-header">
       <h1>
         Mailbox
-        <small>13 new messages</small>
+        <small><a class="noRead">0</a> new messages</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -57,7 +57,7 @@
                   <button type="button" class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
                 </div>
                 <!-- /.btn-group -->
-                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+                <button type="button" class="btn btn-default btn-sm" onclick="location.href='/users/messagelist'"><i class="fa fa-refresh"></i></button>
                 <div class="pull-right">
                   1-50/200
                   <div class="btn-group">

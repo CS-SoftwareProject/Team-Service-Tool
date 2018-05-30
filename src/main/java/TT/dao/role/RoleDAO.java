@@ -75,4 +75,25 @@ public class RoleDAO {
       }
     }); 
   }
+  
+  public Role findByRoleNum(int roleNum) {
+    String sql = "select * from roles where roleNum = ?";
+    return jdbc.executeQuery(sql, new PreparedStatementSetter() {
+      @Override
+      public void setParameters(PreparedStatement pstmt) throws SQLException {
+        pstmt.setInt(1, roleNum);
+      }
+    }, new RowMapper() {
+      @Override
+      public Role mapRow(ResultSet rs) throws SQLException {
+        if(rs.next()) {
+          Role role = new Role();
+          role.setRoleName(rs.getString("roleName"));
+          // ...
+          return role;
+        }
+        return null;
+      }
+    });
+  }
 }
