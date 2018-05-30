@@ -1,4 +1,4 @@
-var webSocket = new WebSocket('ws://localhost:8080/chat');
+var webSocket = new WebSocket('ws://13.125.221.129:8080/chat');
 var inputMessage = document.getElementById('inputMessage');
 var imageId;
 var flag=true;
