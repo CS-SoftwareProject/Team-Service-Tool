@@ -1,4 +1,4 @@
-package TT.db;
+/*package TT.db;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
@@ -12,3 +12,4 @@ public class dbConnectionTest {
     assertNotNull(jdbc.getConnection());
   }
 }
+*/
