@@ -24,7 +24,7 @@ public class CardDAO {
   JdbcTemplate jdbc = new JdbcTemplate();
 
   public List<Card> getCards(int listNum) throws SQLException {
-    String sql = "select Card_Num,Subject from cards where List_Num=? && taskOrder>=0 order by Card_Order asc";
+    String sql = "select Card_Num,Subject from cards where List_Num=? order by Card_Order asc";
     return jdbc.list(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
