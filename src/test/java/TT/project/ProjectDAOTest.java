@@ -1,4 +1,4 @@
-package TT.project;
+/*package TT.project;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -231,3 +231,4 @@ public class ProjectDAOTest {
     logger.debug("" + factory.updateActivity(card, "Old", "New"));
   }
 }
+*/
