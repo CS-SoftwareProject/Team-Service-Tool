@@ -154,11 +154,12 @@ public class ProjectDAO {
 
   public List getUserList(String keyword, String projectName) {
     //String sql = "select * from users where not userId In (select userId from project_members where Project_Name = ?)";
-    String sql = "select userId, name, birth, image from users where userId like '" + keyword.trim() + "%'" + " && not userId in (select userId from project_members where participation = ?)";
+    String sql = "select userId, name, birth, image from users where userId like '" + keyword.trim() + "%'" + " && not userId in (select userId from project_members where participation = ? && Project_Name = ?)";
     return jdbc.list(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
         pstmt.setInt(1, 1);
+        pstmt.setString(2 , projectName);
       }
     }, new RowMapper() {
       @Override
