@@ -5,7 +5,7 @@
 
 <div class="modal fade" id="cardmodal" tabindex="-1" role="dialog" data-focus-on="input:first" aria-labelledby="myModalLabel">
 	<div class="modal-dialog" role="document">
-		<div class="modal-content" id="cardmodal-body" style="padding: 20px; width: 630px; height: 650px;">
+		<div class="modal-content" id="cardmodal-body" style="padding: 20px; width: 645px; height: 650px;">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>

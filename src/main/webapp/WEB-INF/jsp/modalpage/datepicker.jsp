@@ -18,14 +18,14 @@
 								<div class="input-group-addon">
 									<span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
 								</div>
-								<input type="text" class="form-control pull-right" id="datepicker" name="start"  placeholder="날짜를 선택하세요." >
+								<input type="text" class="form-control pull-right" id="datepicker" name="start"  placeholder="시작날짜를 선택하세요." >
 							</div>
-							<div class="input-group duration">
+<!-- 							<div class="input-group duration">
 								<div class="input-group-addon">
 									<span class="fa fa-hourglass-half" aria-hidden="true"></span>
 								</div>
 								<input type="text" class="form-control pull-right" id="duration" name="duration" placeholder="진행 일 수를 입력하세요.">
-							</div>	
+							</div>	 -->
 							<div class="btn-group" style="display: inline-flex; margin-top: 10px;">
 								<button id="apply-btn" class="btn btn-success" style="margin-right: 40px;" type="button" onclick="createStart();">Apply</button>
 								<button id="close-btn" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -56,8 +56,7 @@ function createStart(){
 		type:'get',
 		data:{
 			cardNum:$('#cardNum').val(),
-			start:new Date($('#datepicker').val()).getTime(),
-			duration:$('#duration').val()
+			start:new Date($('#datepicker').val()).getTime()
 			},
 		url:"/cards/CreateDueDate",
 		dataType: "json",

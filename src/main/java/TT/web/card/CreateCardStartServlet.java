@@ -27,10 +27,10 @@ public class CreateCardStartServlet extends HttpServlet {
     Card card = new Card();
     int cardNum = Integer.parseInt(request.getParameter("cardNum"));
     long start = Long.parseLong(request.getParameter("start"));
-    int duration = Integer.parseInt(request.getParameter("duration"));
+    /*int duration = Integer.parseInt(request.getParameter("duration"));*/
     
     try {
-      cardDAO.updateCardStart(start, duration ,cardNum);
+      cardDAO.updateCardStart(start, cardNum);
       card = new Card(cardNum, start);
       
       Gson gson = new Gson();

@@ -34,7 +34,7 @@
 <body class="hold-transition register-page">
 	<div class="register-box">
 		<div class="register-logo" style="background-color: #2c3e4f;">
-			<a href="/T_index.jsp"><b style="color: white;">T·T</b></a>
+			<a href="/login.jsp"><b style="color: white;">T·T</b></a>
 		</div>
 
 		<div class="register-box-body">

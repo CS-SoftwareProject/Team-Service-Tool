@@ -26,7 +26,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo" style="background-color: #2c3e4f;">
-    <a href="/T_index.jsp"><b style="color: white;">Team-proejct Tool</b></a>
+    <a href="/"><b style="color: white;">Team-proejct Tool</b></a>
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">

@@ -172,11 +172,11 @@ function viewCard(currentCardNum){
       dataType:'json',
       success:function (data){
         $('#cardListNum').val(data.listNum);
-        $('#cardmodal-body').css("width", "630px");
-           $('#cardmodal-body').css("height", "650px");
-           $('#btn-area').css("margin-left", "100px");
-           var addStr='';
-          <!-- Card Add-btn Group -->
+        $('#cardmodal-body').css("width", "645px");
+        $('#cardmodal-body').css("height", "650px");
+        $('#btn-area').css("margin-left", "100px");
+        var addStr='';
+     	<!-- Card Add-btn Group -->
          addStr+="<h3>Add</h3>";
          addStr+="<button type='button' class='btn btn-primary btn-lg' onclick='showProgressModal();' style='margin-bottom: 7px;'>Progress</button>";
          addStr+="<button type='button' class='btn btn-primary btn-lg' onclick='showDueDateModal();' style='margin-bottom: 7px;'>Start Date</button>";
@@ -188,6 +188,7 @@ function viewCard(currentCardNum){
         $('#progress-control').html("<button id='apply-btn' class='btn btn-success' style='margin-right: 40px;' type='button' onclick='javascript:cuProgress()'>Apply</button>")
         var str='';
         $('#card-start').html(str);
+		
          $('#card-field').attr("action","/cards/updatecard");
          $('#Title').html("<h2>" + data.subject + "</h2>");
          console.log("[JS.ViewCard] : {}", data.assignees);
@@ -446,7 +447,39 @@ function getRoleList() {
    });
    }
    
+$(function() {
+	console.log("Enter1 : ", getParameters('cardNum'));
+	if(getParameters('cardNum') != null) {
+		console.log("Enter");
+		$("#" + getParameters('cardNum') + "-card-view-btn").click();
+	}
+});
+
+	var getParameters = function (target) {
+    var returnValue;
+	var paraName = target;
+    // 리턴값을 위한 변수 선언
+
+    // 현재 URL 가져오기
+    var url = location.href;
+    
+    // get 파라미터 값을 가져올 수 있는 ? 를 기점으로 slice 한 후 split 으로 나눔
+    var parameters = (url.slice(url.indexOf('?') + 1, url.length)).split('&');
+    // 나누어진 값의 비교를 통해 paramName 으로 요청된 데이터의 값만 return
+    for (var i = 0; i < parameters.length; i++) {
+    	console.log("paramters i ? ", i);
+        var varName = parameters[i].split('=')[0];
+        
+        console.log("varName :", varName);
+        console.log("paraName :", paraName);
+        if (varName.toUpperCase() == paraName.toUpperCase()) {
+            returnValue = parameters[i].split('=')[1];
+            return decodeURIComponent(returnValue);
+        }
+    }
+	};
 </script>
+
 
 <%@ include file="/WEB-INF/jsp/modalpage/userProfile.jsp"%>
 <%@include file="/WEB-INF/jsp/commons/T_footer.jsp"%>

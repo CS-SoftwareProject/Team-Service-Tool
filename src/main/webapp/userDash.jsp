@@ -221,7 +221,7 @@ else {
  }
 	
  function cardNavigator(boardNum, cardNum) {
-	 location.href="/lists/cardlist?boardNum=" + boardNum;
+	 location.href="/lists/cardlist?boardNum=" + boardNum + "&cardNum=" + cardNum;
  }
 </script>
 </body>

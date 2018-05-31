@@ -396,14 +396,13 @@ public class CardDAO {
     });
   }
 
-  public void updateCardStart(long start, int duration, int cardNum) {
-    String sql = "update cards set start = ?, duration = ? where Card_Num = ?";
+  public void updateCardStart(long start, int cardNum) {
+    String sql = "update cards set start = ? where Card_Num = ?";
     jdbc.executeUpdate(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
         pstmt.setLong(1, start);
-        pstmt.setInt(2, duration);
-        pstmt.setInt(3, cardNum);
+        pstmt.setInt(2, cardNum);
       }
     });
   }
@@ -420,7 +419,7 @@ public class CardDAO {
   }
 
   public List<Card> getLastCardList(String projectName) {
-    String sql = "select Subject, userId, progress, List_Num from cards where List_Num in (select List_Num from lists where Board_Num in (select Board_Num from boards where Project_Name = ?)) and taskOrder >= 0 order by Modify_Time desc limit 6;";
+    String sql = "select Card_Num, Subject, userId, progress, List_Num from cards where List_Num in (select List_Num from lists where Board_Num in (select Board_Num from boards where Project_Name = ?)) order by Modify_Time desc limit 6;";
     return jdbc.list(sql, new PreparedStatementSetter() {
       @Override
       public void setParameters(PreparedStatement pstmt) throws SQLException {
@@ -429,7 +428,7 @@ public class CardDAO {
     }, new RowMapper() {
       @Override
       public Card mapRow(ResultSet rs) throws SQLException {
-        Card card = new Card(rs.getString("Subject"), rs.getString("userId"), rs.getInt("List_Num"));
+        Card card = new Card(rs.getInt("Card_Num"), rs.getString("Subject"), rs.getString("userId"), rs.getInt("List_Num"));
         if (rs.getInt("progress") != -1) {
           card.setProgress(rs.getInt("progress"));
         } else {
@@ -441,7 +440,7 @@ public class CardDAO {
   }
 
   public List<Card> setBoardName(List<Card> lastCardList) {
-    String sql = "select Board_Name from boards where board_Num in (select board_Num from lists where List_Num = ?)";
+    String sql = "select board_Num, Board_Name from boards where board_Num in (select board_Num from lists where List_Num = ?)";
     Iterator<Card> iterator = lastCardList.iterator();
     while (iterator.hasNext()) {
       Card card = (Card) iterator.next();
@@ -454,7 +453,8 @@ public class CardDAO {
       }, new RowMapper() {
         @Override
         public Card mapRow(ResultSet rs) throws SQLException {
-          card.setBoardName(rs.getString(1));
+          card.setBoardNum(rs.getInt("board_Num"));
+          card.setBoardName(rs.getString("Board_Name"));
           logger.debug("2 : " + card);
           return null;
         }

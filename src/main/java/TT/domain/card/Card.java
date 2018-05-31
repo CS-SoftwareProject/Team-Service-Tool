@@ -25,10 +25,12 @@ public class Card {
   private boolean hasChild;
   private int taskOrder;
   private String boardName;
+  private int boardNum;
 
   public Card() {}
 
-  public Card(String subject, String userId, int listiNum) {
+  public Card(int cardNum, String subject, String userId, int listiNum) {
+    this.cardNum = cardNum;
     this.subject = subject;
     this.userId = userId;
     this.listNum = listiNum;
@@ -261,6 +263,14 @@ public class Card {
 
   public void setTaskOrder(int taskOrder) {
     this.taskOrder = taskOrder;
+  }
+
+  public int getBoardNum() {
+    return boardNum;
+  }
+
+  public void setBoardNum(int boardNum) {
+    this.boardNum = boardNum;
   }
 
   @Override

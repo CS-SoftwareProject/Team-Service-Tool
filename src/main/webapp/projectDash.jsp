@@ -145,9 +145,9 @@
 				<table class="table table-striped">
 					<tr>
 						<th style="width: 10px">#</th>
-						<th style="width: 300px">Subject</th>
+						<th style="width: 200px">Subject</th>
 						<th>Board</th>
-						<th>User</th>
+						<th style="width: 20%">User</th>
 						<th style="width: 40px">Progress</th>
 					</tr>
 					<c:choose>
@@ -155,9 +155,20 @@
 						<c:forEach var="cardList" items="${projectDash.lastCards}" varStatus="status">
 						<tr>
 							<td>${status.count}.</td>
-							<td>${cardList.subject}</td>
-							<td>${cardList.boardName}</td>
-							<td>${cardList.userId}</td>
+							<td>
+								<a href="#" onclick="javascript:cardNavigator(${cardList.boardNum}, ${cardList.cardNum})">
+								${cardList.subject}
+								</a>
+							</td>
+							<td>
+								${cardList.boardName}
+							</td>
+							<td>
+								<a href="#" onclick="javascript:showUserProfile($(this))">
+								<input type="hidden" id="userId" value="${cardList.userId}">
+								${cardList.userId}
+								</a>
+							</td>
 							<td>
 								<span class="badge bg-red">${cardList.progress}%</span>
 							</td>
@@ -194,7 +205,7 @@ function showUserProfile(target) {
 	$.ajax({
 		type:'get',
 		data:{
-			userId:target.parents('figcaption').find('input').val()
+			userId:target.find('input').val()
 		},
 		url:'/users/readProfile',
 		dataType:'json',
@@ -219,5 +230,9 @@ function showUserProfile(target) {
 		},
 		error:ajaxError
 	});
+}
+
+function cardNavigator(boardNum, cardNum) {
+	 location.href="/lists/cardlist?boardNum=" + boardNum + "&cardNum=" + cardNum;
 }
 </script>
